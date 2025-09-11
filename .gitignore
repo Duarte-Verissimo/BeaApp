@@ -45,3 +45,7 @@ next-env.d.ts
 *.iml
 *.iws
 *.ipr
+
+# Local files
+/.github/instructions/
+toDo.md
