@@ -158,14 +158,15 @@ export async function sendEarningsReport(formData: {
       const info = await transporter.sendMail(mailOptions);
       console.log("Email sent: %s", info.messageId);
       return { success: true, data: info };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error sending email:", error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to send email";
       return { 
         success: false, 
-        error: error.message || "Failed to send email" 
+        error: errorMessage
       };
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error in sendEarningsReport:", error);
     return { success: false, error: "Failed to send email" };
   }

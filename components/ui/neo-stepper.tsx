@@ -185,8 +185,8 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
                   Tratamentos Realizados
                 </h3>
                 {treatmentFields.map((field, index) => (
-                  <div key={field.id} className="flex gap-2 mb-3 items-start">
-                    <div className="flex-1">
+                  <div key={field.id} className="flex flex-col md:flex-row gap-2 mb-6 md:mb-3 items-start border-b-2 border-dashed border-gray-300 pb-4 md:border-0 md:pb-0 last:border-0">
+                    <div className="w-full md:flex-1">
                       <NeoInput
                         label={`Tipo de Tratamento`}
                         placeholder="Tipo de tratamento"
@@ -194,7 +194,7 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
                         error={errors.treatments?.[index]?.type?.message}
                       />
                     </div>
-                    <div className="flex-1">
+                    <div className="w-full md:flex-1">
                       <NeoInput
                         label="Valor (€)"
                         type="number"
@@ -204,15 +204,17 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
                       />
                     </div>
                     {treatmentFields.length > 1 && (
-                      <NeoButton
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => removeTreatment(index)}
-                        className="h-[42px] mt-[28px]"
-                      >
-                        Remover
-                      </NeoButton>
+                      <div className="w-full md:w-auto flex justify-end md:block">
+                        <NeoButton
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removeTreatment(index)}
+                          className="h-[42px] mt-2 md:mt-[28px] w-full md:w-auto"
+                        >
+                          Remover
+                        </NeoButton>
+                      </div>
                     )}
                   </div>
                 ))}
@@ -220,7 +222,7 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
                   type="button"
                   variant="secondary"
                   onClick={() => appendTreatment({ type: "", value: "" })}
-                  className="mt-2"
+                  className="mt-2 w-full md:w-auto"
                 >
                   Adicionar Tratamento
                 </NeoButton>
@@ -240,8 +242,8 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
                   que devem ser deduzidos do seu rendimento.
                 </p>
                 {costFields.map((field, index) => (
-                  <div key={field.id} className="flex gap-2 mb-3 items-start">
-                    <div className="flex-1">
+                  <div key={field.id} className="flex flex-col md:flex-row gap-2 mb-6 md:mb-3 items-start border-b-2 border-dashed border-gray-300 pb-4 md:border-0 md:pb-0 last:border-0">
+                    <div className="w-full md:flex-1">
                       <NeoInput
                         label={`Tipo de Custo ${index + 1}`}
                         placeholder="Tipo de custo"
@@ -249,7 +251,7 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
                         error={errors.costs?.[index]?.type?.message}
                       />
                     </div>
-                    <div className="flex-1">
+                    <div className="w-full md:flex-1">
                       <NeoInput
                         label="Valor (€)"
                         type="number"
@@ -259,15 +261,17 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
                       />
                     </div>
                     {costFields.length > 1 && (
-                      <NeoButton
-                        type="button"
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => removeCost(index)}
-                        className="h-[42px] mt-[28px]"
-                      >
-                        Remover
-                      </NeoButton>
+                      <div className="w-full md:w-auto flex justify-end md:block">
+                        <NeoButton
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removeCost(index)}
+                          className="h-[42px] mt-2 md:mt-[28px] w-full md:w-auto"
+                        >
+                          Remover
+                        </NeoButton>
+                      </div>
                     )}
                   </div>
                 ))}
