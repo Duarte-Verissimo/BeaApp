@@ -13,6 +13,7 @@ export default function Home() {
   const [submitError, setSubmitError] = useState<string | null>(null)
   
   const form = useForm<FormData>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
       treatments: [{ type: "", value: "" }],

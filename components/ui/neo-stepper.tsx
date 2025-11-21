@@ -94,7 +94,6 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
     const customClinicName = watch("customClinicName");
     const contractPercentage = watch("contractPercentage");
     const reportEmail = watch("reportEmail");
-    const confirmDetails = watch("confirmDetails");
 
     const handleStepClick = async (index: number) => {
       if (onStepChange && index < currentStep) {
@@ -126,6 +125,7 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
       try {
         // Convert FormData to the structure expected by sendEarningsReport if needed
         // Assuming sendEarningsReport accepts the same structure or compatible
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const result = await sendEarningsReport(data as any);
 
         if (result.success) {

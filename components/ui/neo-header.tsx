@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { NeoButton } from "@/components/ui/neo-button";
 import { AuthModal } from "@/components/auth/auth-modal";
 import { useAuth } from "@/contexts/auth-context";
@@ -32,9 +33,9 @@ const NeoHeader: React.FC<NeoHeaderProps> = ({ title = "Bea." }) => {
           {/* Left part - Title */}
           <div className="flex items-center">
             <h1 className="text-2xl font-bold ">
-              <a href="/" className="text-white">
+              <Link href="/" className="text-white">
                 {title}
-              </a>
+              </Link>
             </h1>
           </div>
 
