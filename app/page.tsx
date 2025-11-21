@@ -1,7 +1,10 @@
 'use client'
 
 import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { NeoStepper, type Step } from "@/components/ui/neo-stepper"
+import { formSchema, type FormData } from "@/lib/schemas"
 
 export default function Home() {
   const [currentStep, setCurrentStep] = useState(0)
@@ -9,19 +12,16 @@ export default function Home() {
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   
-  // Form data state
-  const [formData, setFormData] = useState({
-    companyName: "",
-    customClinicName: "",
-    contractPercentage: "",
-    reportEmail: "",
-    confirmDetails: false,
-    treatments: [
-      { type: "", value: "" }
-    ],
-    costs: [
-      { type: "", value: "" }
-    ]
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema) as any,
+    defaultValues: {
+      treatments: [{ type: "", value: "" }],
+      costs: [],
+      companyName: "",
+      contractPercentage: "",
+      confirmDetails: false,
+    },
+    mode: "onChange"
   })
 
   const steps: Step[] = [
@@ -58,8 +58,7 @@ export default function Home() {
           steps={steps}
           currentStep={currentStep}
           onStepChange={handleStepChange}
-          formData={formData}
-          setFormData={setFormData}
+          form={form}
           isSubmitting={isSubmitting}
           setIsSubmitting={setIsSubmitting}
           submitSuccess={submitSuccess}
