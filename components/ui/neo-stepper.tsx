@@ -610,8 +610,8 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
         )}
       </div>
     );
-  }
-);
+  });
+
 
 NeoStepper.displayName = "NeoStepper";
 
