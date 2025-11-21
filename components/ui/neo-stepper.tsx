@@ -188,7 +188,7 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
                   <div key={field.id} className="flex gap-2 mb-3 items-start">
                     <div className="flex-1">
                       <NeoInput
-                        label={`Tipo de Tratamento ${index + 1}`}
+                        label={`Tipo de Tratamento`}
                         placeholder="Tipo de tratamento"
                         {...register(`treatments.${index}.type`)}
                         error={errors.treatments?.[index]?.type?.message}

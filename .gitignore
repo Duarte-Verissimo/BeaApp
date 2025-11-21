@@ -49,3 +49,4 @@ next-env.d.ts
 # Local files
 /.github/instructions/
 toDo.md
+.md 

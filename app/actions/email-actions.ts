@@ -1,8 +1,6 @@
 "use server";
 
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import nodemailer from 'nodemailer';
 
 export async function sendEarningsReport(formData: {
   companyName: string;
@@ -140,22 +138,36 @@ export async function sendEarningsReport(formData: {
       </html>
     `;
 
-    // Send email using Resend with a verified domain or default domain
-    const { data, error } = await resend.emails.send({
-      from: "delivered@resend.dev", // Using Resend's default verified domain
+    // Send email using Nodemailer (Gmail)
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: `"Bea App" <${process.env.GMAIL_USER}>`,
       to: formData.reportEmail,
       subject: "Relatório de Ganhos Diários - Dentista",
       html: htmlContent,
-    });
+    };
 
-    if (error) {
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Email sent: %s", info.messageId);
+      return { success: true, data: info };
+    } catch (error: any) {
       console.error("Error sending email:", error);
-      return { success: false, error: error.message };
+      return { 
+        success: false, 
+        error: error.message || "Failed to send email" 
+      };
     }
-
-    return { success: true, data };
   } catch (error) {
     console.error("Error in sendEarningsReport:", error);
     return { success: false, error: "Failed to send email" };
   }
 }
+
