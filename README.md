@@ -1,117 +1,70 @@
-# BeaApp
+# Bea.
 
-![Screenshot da aplicação](./docs/screenshots/app-screenshot.png)
+> **Calculadora de Rendimentos para Médicos Dentistas**
+> *Simples. Moderna. Eficiente.*
 
-## Descrição
+[![Ver Aplicação](https://img.shields.io/badge/Ver_Aplicação-bea--app.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://bea-app.vercel.app/)
 
-BeaApp é uma aplicação web moderna desenvolvida com Next.js 15+ que oferece uma experiência de utilizador intuitiva e visualmente apelativa. A aplicação utiliza uma paleta de cores suaves e acolhedoras com tons de rosa, bege e cinzento, criando uma atmosfera convidativa para os utilizadores.
+![Screenshot da Aplicação](docs/screenshots/app-screenshot.png)
 
-## Funcionalidades
+---
 
-- **Autenticação de Utilizadores**: Sistema completo de login e registo com suporte para autenticação via Google
-- **Interface Responsiva**: Design totalmente responsivo que funciona em dispositivos móveis, tablets e desktops
-- **Componentes Personalizados**: Botões e elementos de interface com estilo "neumorphic" únicos
-- **Gestão de Estado**: Utilização de Context API para gestão de estado global da aplicação
-- **Integração com Supabase**: Backend como serviço para autenticação e armazenamento de dados
+## 🦷 Sobre o Projeto
 
-## Tecnologias Utilizadas
+**Bea** é uma aplicação web desenhada especificamente para médicos dentistas que necessitam de controlar os seus rendimentos de forma clara e eficaz. 
 
-- [Next.js 15+](https://nextjs.org/) - Framework React para produção
-- [TypeScript](https://www.typescriptlang.org/) - Superset tipado do JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) - Framework CSS utilitário
-- [Supabase](https://supabase.io/) - Backend como serviço (autenticação, base de dados)
-- [React](https://reactjs.org/) - Biblioteca para interfaces de utilizador
+Muitos profissionais trabalham em múltiplas clínicas com diferentes percentagens de contrato, tornando o cálculo do rendimento líquido diário uma tarefa complexa. A **Bea** simplifica este processo, permitindo registar tratamentos, deduzir custos e calcular automaticamente o valor a receber, tudo numa interface moderna e intuitiva.
 
-## Requisitos
+---
 
-- Node.js 18 ou superior
-- npm, yarn ou pnpm
+## ✨ Destaques Visuais
 
-## Instalação
+O design da aplicação segue uma estética **Neo-Brutalista**, caracterizada por:
+- **Bordas Fortes**: Linhas pretas espessas que definem claramente a estrutura.
+- **Sombras Rígidas**: Profundidade visual sem desfoque, criando um aspeto "pop".
+- **Tipografia Ousada**: Leitura fácil e hierarquia clara.
+- **Cores Vibrantes**: Uma paleta cuidada com destaque para o bege `#FAEEE7` e acentos coloridos.
 
-1. Clone o repositório:
+---
 
-   ```bash
-   git clone https://github.com/Duarte-Verissimo/BeaApp.git
-   ```
+## 🚀 Funcionalidades Principais
 
-2. Navegue até ao diretório do projeto:
+### 🏥 Gestão de Clínicas
+- Crie e gerencie a sua lista de clínicas personalizadas.
+- Defina a percentagem de contrato para cada local de trabalho.
+- As suas clínicas aparecem automaticamente no fluxo de criação de relatórios.
 
-   ```bash
-   cd BeaApp
-   ```
+### 💰 Calculadora Inteligente
+- **Tratamentos**: Adicione múltiplos tratamentos realizados no dia.
+- **Custos**: Deduza custos de laboratório ou materiais.
+- **Cálculo Automático**: A aplicação aplica a sua percentagem e subtrai os custos instantaneamente.
 
-3. Instale as dependências:
+### 📊 Dashboard & Relatórios
+- Guarde o histórico dos seus dias de trabalho.
+- Visualize os seus ganhos líquidos por dia e por clínica.
+- Envie relatórios detalhados por email para o seu registo pessoal.
 
-   ```bash
-   npm install
-   # ou
-   yarn install
-   # ou
-   pnpm install
-   ```
+---
 
-4. Configure as variáveis de ambiente:
-   Crie um ficheiro `.env.local` na raiz do projeto com as seguintes variáveis:
+## 🛠️ Stack Tecnológico
 
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=sua_url_do_supabase
-   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sua_chave_publicável_do_supabase
-   ```
+Este projeto foi construído com as tecnologias mais modernas do ecossistema React:
 
-5. Inicie o servidor de desenvolvimento:
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Linguagem**: [TypeScript](https://www.typescriptlang.org/)
+- **Estilos**: [Tailwind CSS](https://tailwindcss.com/)
+- **Base de Dados & Auth**: [Supabase](https://supabase.com/)
+- **Formulários**: React Hook Form + Zod
+- **Emails**: Nodemailer
 
-   ```bash
-   npm run dev
-   # ou
-   yarn dev
-   # ou
-   pnpm dev
-   ```
+---
 
-6. Abra [http://localhost:3000](http://localhost:3000) no seu browser.
+## 📱 Experiência do Utilizador
 
-## Estrutura do Projeto
+A **Bea** foi pensada para ser usada em movimento. Seja no telemóvel entre consultas ou no computador ao final do dia, a interface adapta-se perfeitamente a qualquer ecrã.
 
-```
-├── app/                    # App Router do Next.js
-│   ├── auth/              # Páginas de autenticação
-│   ├── actions/           # Server Actions
-│   └── ...
-├── components/            # Componentes React reutilizáveis
-│   ├── auth/              # Componentes de autenticação
-│   ├── ui/                # Componentes de interface
-│   └── ...
-├── contexts/              # React Contexts
-├── lib/                   # Funções utilitárias
-├── public/                # Ficheiros estáticos
-├── services/              # Serviços da aplicação
-├── utils/                 # Utilitários
-│   └── supabase/         # Configuração do Supabase
-└── ...
-```
+---
 
-## Comandos Disponíveis
-
-- `npm run dev` - Inicia o servidor de desenvolvimento
-- `npm run build` - Compila a aplicação para produção
-- `npm run start` - Inicia o servidor de produção
-- `npm run lint` - Executa o linter para verificar erros
-
-## Contribuição
-
-1. Faça um fork do projeto
-2. Crie uma branch para a sua feature (`git checkout -b feature/AmazingFeature`)
-3. Faça commit das suas alterações (`git commit -m 'Add some AmazingFeature'`)
-4. Faça push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## Licença
-
-Este projeto está licenciado sob a licença MIT - veja o ficheiro [LICENSE](LICENSE) para detalhes.
-
-## Contacto
-
-Duarte Veríssimo - [@Duarte-Verissimo](https://github.com/Duarte-Verissimo)
-
-Link do Projeto: [https://github.com/Duarte-Verissimo/BeaApp](https://github.com/Duarte-Verissimo/BeaApp)
+<div align="center">
+  <sub>Desenvolvido com ❤️ por Duarte Veríssimo</sub>
+</div>

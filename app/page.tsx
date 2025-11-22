@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { NeoStepper, type Step } from "@/components/ui/neo-stepper"
 import { formSchema, type FormData } from "@/lib/schemas"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function Home() {
+  const { user } = useAuth()
   const [currentStep, setCurrentStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
@@ -21,11 +23,19 @@ export default function Home() {
       companyName: "",
       contractPercentage: "",
       confirmDetails: false,
+      reportEmail: "",
     },
     mode: "onChange"
   })
 
-  const steps: Step[] = [
+  // Update email when user logs in
+  useEffect(() => {
+    if (user?.email) {
+      form.setValue("reportEmail", user.email)
+    }
+  }, [user, form])
+
+  const allSteps: Step[] = [
     {
       id: "step1",
       title: "Tratamentos"
@@ -47,6 +57,11 @@ export default function Home() {
       title: "Confirmação"
     }
   ]
+
+  // Filter out email step if user is logged in
+  const steps = user 
+    ? allSteps.filter(step => step.title !== "E-mail")
+    : allSteps
 
   const handleStepChange = (step: number) => {
     setCurrentStep(step)

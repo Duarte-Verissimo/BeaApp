@@ -45,14 +45,21 @@ const NeoHeader: React.FC<NeoHeaderProps> = ({ title = "Bea." }) => {
           </div>
 
           {/* Right part - Button */}
-          <div className="flex items-center">
+          <div className="flex items-center gap-4">
             {user ? (
-              <NeoButton
-                className="bg-white rounded-lg border-2"
-                onClick={handleSignOut}
-              >
-                Logout
-              </NeoButton>
+              <>
+                <Link href="/dashboard">
+                  <NeoButton className="bg-white rounded-lg border-2">
+                    Dashboard
+                  </NeoButton>
+                </Link>
+                <NeoButton
+                  className="bg-white rounded-lg border-2"
+                  onClick={handleSignOut}
+                >
+                  Logout
+                </NeoButton>
+              </>
             ) : (
               <NeoButton
                 className="bg-white rounded-lg border-2"

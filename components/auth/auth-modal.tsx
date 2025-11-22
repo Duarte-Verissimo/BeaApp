@@ -80,11 +80,11 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+    <div className="fixed inset-0 backdrop-blur-sm bg-white/30 flex items-center justify-center z-50">
+      <div className="p-6 rounded-lg shadow-lg w-full max-w-md" style={{ backgroundColor: '#FAEEE7' }}>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">{isLogin ? 'Login' : 'Cadastro'}</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 bg-transparent">
             &times;
           </button>
         </div>
@@ -145,7 +145,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">
+              <span className="px-2 text-gray-500" style={{ backgroundColor: '#FAEEE7' }}>
                 Ou continue com
               </span>
             </div>

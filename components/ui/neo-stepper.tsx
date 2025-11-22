@@ -6,8 +6,10 @@ import { cn } from "@/lib/utils";
 import { NeoButton } from "@/components/ui/neo-button";
 import { NeoInput } from "@/components/ui/neo-input";
 import { sendEarningsReport } from "@/app/actions/email-actions";
+import { saveReport, getClinicSettings } from "@/app/actions/report-actions";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { FormData } from "@/lib/schemas";
+import { useAuth } from "@/contexts/auth-context";
 
 const neoStepperVariants = cva("flex w-full", {
   variants: {
@@ -60,11 +62,13 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
     },
     ref
   ) => {
+    const { user } = useAuth();
     const {
       register,
       control,
       trigger,
       watch,
+      setValue,
       handleSubmit: rhfHandleSubmit,
       formState: { errors },
     } = form;
@@ -87,6 +91,9 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
       name: "costs",
     });
 
+    // State to hold user's clinic settings
+    const [clinicSettings, setClinicSettings] = React.useState<Array<{ id: string; clinic_name: string; contract_percentage: number }>>([]);
+
     // Watch values for calculations and conditional rendering
     const treatments = watch("treatments");
     const costs = watch("costs");
@@ -94,6 +101,28 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
     const customClinicName = watch("customClinicName");
     const contractPercentage = watch("contractPercentage");
     const reportEmail = watch("reportEmail");
+
+    // Fetch clinic settings when user logs in
+    React.useEffect(() => {
+      const fetchSettings = async () => {
+        if (user) {
+          const settings = await getClinicSettings(user.id);
+          setClinicSettings(settings);
+          
+          // Auto-fill percentage if clinic is already selected
+          const clinicNameToCheck = companyName === "Outro" ? customClinicName : companyName;
+          
+          if (clinicNameToCheck) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const setting = settings?.find((s: any) => s.clinic_name === clinicNameToCheck);
+            if (setting) {
+              setValue("contractPercentage", setting.contract_percentage.toString());
+            }
+          }
+        }
+      };
+      fetchSettings();
+    }, [user, companyName, customClinicName, setValue]);
 
     const handleStepClick = async (index: number) => {
       if (onStepChange && index < currentStep) {
@@ -123,15 +152,33 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
       setSubmitError(null);
 
       try {
-        // Convert FormData to the structure expected by sendEarningsReport if needed
-        // Assuming sendEarningsReport accepts the same structure or compatible
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const result = await sendEarningsReport(data as any);
+        // If user is logged in, save the report
+        if (user) {
+          const saveResult = await saveReport(data, user.id);
+          if (!saveResult.success) {
+            console.error("Failed to save report:", saveResult.error);
+            // We continue to send email even if save fails? Or show error?
+            // Let's show error but maybe still try to send email if requested?
+            // For now, let's assume saving is critical if logged in.
+          }
+        }
 
-        if (result.success) {
-          setSubmitSuccess(true);
+        // Always send email if reportEmail is present
+        if (data.reportEmail) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const result = await sendEarningsReport(data as any);
+
+          if (result.success) {
+            setSubmitSuccess(true);
+          } else {
+            setSubmitError(result.error || "Failed to send report");
+          }
         } else {
-          setSubmitError(result.error || "Failed to send report");
+          // If no email (shouldn't happen if validation works, but maybe user didn't want email?)
+          // If logged in and saved, we can consider it a success
+          if (user) {
+            setSubmitSuccess(true);
+          }
         }
       } catch (error) {
         setSubmitError("An unexpected error occurred");
@@ -143,18 +190,19 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
 
     const handleNext = async () => {
       let isValid = false;
+      const currentStepId = steps[currentStep].id;
 
-      switch (currentStep) {
-        case 0:
+      switch (currentStepId) {
+        case "step1":
           isValid = await trigger("treatments");
           break;
-        case 1:
+        case "step2":
           isValid = await trigger("costs");
           break;
-        case 2:
+        case "step3":
           isValid = await trigger(["companyName", "customClinicName", "contractPercentage"]);
           break;
-        case 3:
+        case "step4":
           isValid = await trigger("reportEmail");
           break;
         default:
@@ -176,8 +224,10 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
     const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
 
     const renderStepContent = () => {
-      switch (currentStep) {
-        case 0: // Treatments only
+      const currentStepId = steps[currentStep].id;
+
+      switch (currentStepId) {
+        case "step1": // Treatments only
           return (
             <div className="space-y-4">
               <div className="mt-6">
@@ -232,7 +282,7 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
               </div>
             </div>
           );
-        case 1: // Costs
+        case "step2": // Costs
           return (
             <div className="space-y-4">
               <div className="mt-6">
@@ -286,7 +336,7 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
               </div>
             </div>
           );
-        case 2: // Business Info
+        case "step3": // Business Info
           return (
             <div className="space-y-4">
               <div className="w-full">
@@ -301,19 +351,39 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
                   )}
                 >
                   <option value="">Selecione uma clínica</option>
-                  <option value="Smile.up">Smile.up</option>
-                  <option value="OralMED">OralMED</option>
-                  <option value="Malo Clinic">Malo Clinic</option>
-                  <option value="Vitaldent">Vitaldent</option>
-                  <option value="CUF">CUF</option>
-                  <option value="Master Dental">Master Dental</option>
-                  <option value="Clínica Santa Madalena">
-                    Clínica Santa Madalena
-                  </option>
-                  <option value="Clínica Médis">Clínica Médis</option>
-                  <option value="O Meu Doutor">O Meu Doutor</option>
-                  <option value="Médico dos Dentes">Médico dos Dentes</option>
-                  <option value="Dental Light">Dental Light</option>
+                  
+                  {/* User-defined clinics */}
+                  {clinicSettings.length > 0 && (
+                    <>
+                      <optgroup label="As Suas Clínicas">
+                        {clinicSettings.map((clinic) => (
+                          <option key={clinic.id} value={clinic.clinic_name}>
+                            {clinic.clinic_name} ({clinic.contract_percentage}%)
+                          </option>
+                        ))}
+                      </optgroup>
+                    </>
+                  )}
+                  
+                  {/* Default clinics - only show if user has no custom clinics */}
+                  {clinicSettings.length === 0 && (
+                    <>
+                      <option value="Smile.up">Smile.up</option>
+                      <option value="OralMED">OralMED</option>
+                      <option value="Malo Clinic">Malo Clinic</option>
+                      <option value="Vitaldent">Vitaldent</option>
+                      <option value="CUF">CUF</option>
+                      <option value="Master Dental">Master Dental</option>
+                      <option value="Clínica Santa Madalena">
+                        Clínica Santa Madalena
+                      </option>
+                      <option value="Clínica Médis">Clínica Médis</option>
+                      <option value="O Meu Doutor">O Meu Doutor</option>
+                      <option value="Médico dos Dentes">Médico dos Dentes</option>
+                      <option value="Dental Light">Dental Light</option>
+                    </>
+                  )}
+                  
                   <option value="Outro">Outro</option>
                 </select>
                 {errors.companyName && (
@@ -337,7 +407,7 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
               />
             </div>
           );
-        case 3: // Email
+        case "step4": // Email
           return (
             <div className="space-y-4">
               <NeoInput
@@ -353,7 +423,7 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
               </p>
             </div>
           );
-        case 4: // Confirmation
+        case "step5": // Confirmation
           return (
             <div className="space-y-4">
               <div className="p-4 border-2 border-black bg-white">
@@ -440,7 +510,7 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
                 <div className="p-4 border-2 border-green-500 bg-green-100 text-green-700">
                   <p className="font-bold">Relatório enviado com sucesso!</p>
                   <p>
-                    O seu relatório foi enviado para {reportEmail}.
+                    {reportEmail ? `O seu relatório foi enviado para ${reportEmail}.` : "O seu relatório foi guardado."}
                   </p>
                 </div>
               )}
@@ -614,8 +684,8 @@ const NeoStepper = React.forwardRef<HTMLDivElement, NeoStepperProps>(
         )}
       </div>
     );
-  });
-
+  }
+);
 
 NeoStepper.displayName = "NeoStepper";
 

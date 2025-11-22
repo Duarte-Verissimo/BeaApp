@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const treatmentSchema = z.object({
-  type: z.string().min(1, "O tipo de tratamento é obrigatório"),
+  type: z.string().optional(),
   value: z.string().refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, {
     message: "O valor deve ser um número positivo ou zero",
   }),
