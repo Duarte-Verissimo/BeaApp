@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { NeoButton } from '@/components/ui/neo-button';
 import { NeoInput } from '@/components/ui/neo-input';
 import { useAuth } from '@/contexts/auth-context';
@@ -22,15 +22,15 @@ export function ClinicManager() {
   const [newName, setNewName] = useState('');
   const [newPerc, setNewPerc] = useState('');
 
-  const fetchClinics = async () => {
+  const fetchClinics = useCallback(async () => {
     if (!user) return;
     const data = await getClinicSettings(user.id);
     setClinics(data);
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchClinics();
-  }, [user]);
+  }, [fetchClinics]);
 
   const handleAdd = async () => {
     if (!user) return;
@@ -51,6 +51,7 @@ export function ClinicManager() {
       await fetchClinics();
       router.refresh();
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setError((result as any).error?.message || 'Erro ao guardar');
     }
     setLoading(false);
