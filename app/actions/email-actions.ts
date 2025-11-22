@@ -1,6 +1,7 @@
 "use server";
 
 import nodemailer from 'nodemailer';
+import { generateEarningsReportHtml } from './email-templates';
 
 export async function sendEarningsReport(formData: {
   companyName: string;
@@ -26,117 +27,13 @@ export async function sendEarningsReport(formData: {
         : formData.companyName || "Não especificado";
 
     // Create HTML email content
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <title>Relatório de Ganhos Diários</title>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              line-height: 1.6;
-              color: #333;
-              max-width: 800px;
-              margin: 0 auto;
-              padding: 20px;
-            }
-            .header {
-              text-align: center;
-              border-bottom: 2px solid #000;
-              padding-bottom: 20px;
-              margin-bottom: 30px;
-            }
-            .section {
-              margin-bottom: 30px;
-              padding: 20px;
-              border: 2px solid #000;
-            }
-            .section-title {
-              font-size: 20px;
-              font-weight: bold;
-              margin-bottom: 15px;
-              color: #000;
-            }
-            .treatments-table {
-              width: 100%;
-              border-collapse: collapse;
-              margin: 20px 0;
-            }
-            .treatments-table th,
-            .treatments-table td {
-              border: 1px solid #000;
-              padding: 10px;
-              text-align: left;
-            }
-            .treatments-table th {
-              background-color: #f5f5f5;
-              font-weight: bold;
-            }
-            .total-row {
-              font-weight: bold;
-            }
-            .highlight {
-              font-size: 18px;
-              font-weight: bold;
-              color: #000;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>Relatório de Ganhos Diários</h1>
-            <p>Calculadora de Rendimento Líquido - Dentista</p>
-          </div>
-          
-          <div class="section">
-            <div class="section-title">Informações da Clínica</div>
-            <p><strong>Clínica:</strong> ${clinicName}</p>
-            <p><strong>Percentagem do Contrato:</strong> ${percentage}%</p>
-          </div>
-          
-          <div class="section">
-            <div class="section-title">Tratamentos Realizados</div>
-            <table class="treatments-table">
-              <thead>
-                <tr>
-                  <th>Tipo de Tratamento</th>
-                  <th>Valor (€)</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${formData.treatments
-                  .map(
-                    (treatment) => `
-                  <tr>
-                    <td>${treatment.type || "Tratamento sem nome"}</td>
-                    <td>${
-                      parseFloat(treatment.value)
-                        ? parseFloat(treatment.value).toFixed(2)
-                        : "0.00"
-                    }€</td>
-                  </tr>
-                `
-                  )
-                  .join("")}
-                <tr class="total-row">
-                  <td>Total Bruto:</td>
-                  <td>${total.toFixed(2)}€</td>
-                </tr>
-                <tr class="total-row">
-                  <td>Ganhos Líquidos:</td>
-                  <td class="highlight">${netEarnings.toFixed(2)}€</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          
-          <div class="section">
-            <p>Este relatório foi gerado automaticamente pela Calculadora de Rendimento Líquido.</p>
-          </div>
-        </body>
-      </html>
-    `;
+    const htmlContent = generateEarningsReportHtml({
+      clinicName,
+      percentage,
+      treatments: formData.treatments,
+      total,
+      netEarnings
+    });
 
     // Send email using Nodemailer (Gmail)
     const transporter = nodemailer.createTransport({
